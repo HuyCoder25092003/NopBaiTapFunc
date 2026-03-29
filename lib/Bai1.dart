@@ -1,106 +1,73 @@
 import 'dart:io';
-
-bool kiemTraCoPhaiLaSoKhong(double input) => input >=0 && input <=10;
+bool laSoHopLe(int input) => input >=0;
 
 bool kiemTraTenCoHopLeKhong(String name) => RegExp(r'^[a-zA-Z\s]+$').hasMatch(name);
 
-void themSinhVien(List dssv)
+void themSanPham(List dssp)
 {
+  int giaTien = 0, soLuong = 0;
+  String tenSanPham = "";
+
+  print("Ten san pham");
   while(true)
   {
-    double diemToan = 0, diemLy = 0, diemHoa = 0;
-    String hoTen = "";
+    tenSanPham = stdin.readLineSync()!.replaceAll(RegExp(r'\s+'), ' ').trim().toLowerCase();
+    if(kiemTraTenCoHopLeKhong(tenSanPham))
+      break;
+    else
+      print("Ten khong hop le. Vui long nhap lai");
+  }
 
-    print("Ho ten");
-    while(true)
+  print("Gia tien");
+  while(true)
+  {
+    giaTien = int.tryParse(stdin.readLineSync() ?? "") ?? -1;
+    if(laSoHopLe(giaTien))
+      break;
+    else
+      print("Ban vua nhap khong phai la so. Vui long nhap lai.");
+  }
+
+  print("So luong");
+  while(true)
+  {
+    soLuong = int.tryParse(stdin.readLineSync() ?? "") ?? -1;
+    if(laSoHopLe(soLuong))
+      break;
+    else
+      print("Ban vua nhap khong phai la so. Vui long nhap lai.");
+  }
+
+  if(dssp.isNotEmpty)
+  {
+    var kiemTraSanPham = dssp.firstWhere((e) => e['tenSanPham'] == tenSanPham && e['giaTien'] == giaTien, orElse: () => <String, dynamic>{});
+  
+    if (kiemTraSanPham.isNotEmpty)
     {
-      hoTen = stdin.readLineSync()!.replaceAll(RegExp(r'\s+'), ' ').trim().toLowerCase();
-      if(kiemTraTenCoHopLeKhong(hoTen))
-        break;
-      else
-        print("Ten khong hop le. Vui long nhap lai");
-    }
-
-    print("Diem toan");
-    while(true)
-    {
-      diemToan = double.tryParse(stdin.readLineSync() ?? "") ?? -1;
-      if(kiemTraCoPhaiLaSoKhong(diemToan))
-        break;
-      else
-        print("Ban vua nhap khong phai la so. Vui long nhap lai.");
-    }
-
-    print("Diem ly");
-    while(true)
-    {
-      diemLy = double.tryParse(stdin.readLineSync() ?? "") ?? -1;
-      if(kiemTraCoPhaiLaSoKhong(diemLy))
-        break;
-      else
-        print("Ban vua nhap khong phai la so. Vui long nhap lai.");
-    }
-
-    print("Diem hoa");
-    while(true)
-    {
-      diemHoa = double.tryParse(stdin.readLineSync() ?? "") ?? -1;
-      if(kiemTraCoPhaiLaSoKhong(diemHoa))
-        break;
-      else
-        print("Ban vua nhap khong phai la so. Vui long nhap lai.");
-    }
-    
-    double diemTrungBinhMon = double.parse(diemTrungBinh(diemToan, diemLy, diemHoa).toStringAsFixed(1));
-
-    String hocLuc = "Kem";
-
-    if(diemTrungBinhMon > 9)
-      hocLuc = "Xuat sac";
-    else if(diemTrungBinhMon > 7 && diemTrungBinhMon <=9)
-      hocLuc = "Gioi";
-    else if (diemTrungBinhMon > 5 && diemTrungBinhMon <=7)
-      hocLuc = "Kha";
-
-    if(dssv.isNotEmpty)
-    {
-      var kiemTraTen = dssv.any((e) => e['hoTen'] == hoTen && e['diemToan'] == diemToan 
-                                     && e['diemLy'] == diemLy && e['diemHoa'] == diemHoa);
-      if(!kiemTraTen)
-      {
-        dssv.add(
-          { 'hoTen':hoTen,
-            'diemToan': diemToan,
-            'diemLy': diemLy,
-            'diemHoa' : diemHoa,
-            'diemTrungBinh' : diemTrungBinhMon,
-            'hocLuc' : hocLuc,
-          }
-        );
-        break;
-      }
-      else
-      {
-        print("Sinh vien da ton tai");
-      }
+      kiemTraSanPham['soLuong'] += soLuong;
     }
     else
     {
-      dssv.add
-      (
-        { 'hoTen':hoTen,
-          'diemToan': diemToan,
-          'diemLy': diemLy,
-          'diemHoa' : diemHoa,
-          'diemTrungBinh' : diemTrungBinhMon,
-          'hocLuc' : hocLuc,
+      dssp.add(
+        { 'tenSanPham': tenSanPham,
+          'giaTien': giaTien,
+          'soLuong': soLuong,
         }
       );
-      break;
     }
   }
+  else
+  {
+    dssp.add(
+      { 'tenSanPham': tenSanPham,
+        'giaTien': giaTien,
+        'soLuong': soLuong,
+      }
+    );
+  }
+
 }
-void themDanhSachSinhVien(List dssv, int n)
+void themDanhSachSanPham(List dssp, int n)
 {
   if(n == 0)
   {
@@ -109,101 +76,160 @@ void themDanhSachSinhVien(List dssv, int n)
   }
   else if (n == 1)
   {
-    print("Sinh vien thu 1");
-    themSinhVien(dssv);
+    print("San pham thu 1");
+    themSanPham(dssp);
   }
   else
   {
     for(int i = 0 ; i<n ; i++)
     {
-      print("Sinh vien thu ${i+1}");
-      themSinhVien(dssv);
+      print("San pham thu ${i+1}");
+      themSanPham(dssp);
     }
   }
 }
 
-double diemTrungBinh(double diemToan, double diemLy, double diemHoa) => (diemToan + diemLy + diemHoa) / 3;
-
-void timKiemDTBCaoNhat(List dssv)
+void xuatDanhSachSanPham(List dssp)
 {
-  if(dssv.isEmpty)
-    print("Khong co sinh vien trong danh sach");
-  else if(dssv.length == 1)
-    print("Sinh vien co diem trung binh cao nhat la: ${dssv[0]["hoTen"]}");
-  else
+  if(dssp.isEmpty)
   {
-    double diemTB = 0;
-    List<Map<String, dynamic>> svBest = [];
-    for(var sv in dssv)
-    {
-      if(sv["diemTrungBinh"] > diemTB)
-      {
-        diemTB = sv["diemTrungBinh"];
-        svBest = [sv];
-      }
-      else if (sv['diemTrungBinh'] == diemTB)
-        svBest.add(sv);
-    }
-    
-    if(svBest.length == 1)
-      print("Sinh vien co diem trung binh cao nhat la: ${svBest[0]["hoTen"]}");
-    else if (dssv.length > 1)
-    {
-      print("Co tong cong ${svBest.length} sinh vien co diem trung binh cao nhat");
-      for(int i = 0; i < svBest.length; i++)
-        print("Sinh vien ${i+1} ho ten: ${svBest[i]["hoTen"]}");
-    }
-  }
-}
-
-void xuatDanhSachSinhVien(List dssv)
-{
-  if(dssv.isEmpty)
-  {
-    print("Khong co sinh vien");
+    print("Khong co san pham");
     return;
   }
 
-  print("Thong tin cac sinh vien");  
-  for(int i = 0; i < dssv.length; i++)
+  print("Thong tin cac san pham");  
+  for(int i = 0; i < dssp.length; i++)
   {
-    print("Sinh vien thu ${i+1}");
-    print("Ho ten: ${dssv[i]["hoTen"]} Diem toan: ${dssv[i]["diemToan"]} Diem ly: ${dssv[i]["diemLy"]} Diem hoa: ${dssv[i]["diemHoa"]} Diem trung binh: ${dssv[i]["diemTrungBinh"]} Hoc luc: ${dssv[i]["hocLuc"]}");
+    print("San pham thu ${i+1}");
+    print("Ten san pham: ${dssp[i]["tenSanPham"]} Gia tien: ${dssp[i]["giaTien"]} So luong: ${dssp[i]["soLuong"]}");
   }
 }
+bool timKiemSanPhamTheoTen(List dssp, String name) => dssp.any((e) => e['tenSanPham'] == name);
+
+int tongTienSanPham(List dssp)
+{
+  int tong = 0;
+  if(dssp.isEmpty)
+    return tong;
+  for(int i = 0; i<dssp.length; i++)
+    tong+= (dssp[i]["giaTien"] as int) * (dssp[i]["soLuong"] as int);
+  return tong;
+}
+
+void xoaSanPham(List dssp, String name)
+{
+  if(dssp.isEmpty)
+  {
+    print("Danh sach hien tai chua co san pham");
+    return; 
+  }
+  if(!timKiemSanPhamTheoTen(dssp, name))
+  {
+    print("Khong tim thay san pham");
+    return;
+  }
+  dssp.removeWhere((e) => e['tenSanPham'] == name);
+  print("Da xoa san pham");
+}
+
+void suaSanPham(List dssp, String name)
+{
+  if(dssp.isEmpty)
+  {
+    print("Danh sach hien tai chua co san pham");
+    return;
+  }
+  int check = -1;
+  for (var sp in dssp) 
+  {
+    if (sp['tenSanPham'] == name) 
+    {
+      check = 1;
+      print("Nhap so luong moi:");
+      int soLuongMoi = 0;
+      while(true)
+      {
+        soLuongMoi = int.tryParse(stdin.readLineSync() ?? "") ?? -1;
+        if(laSoHopLe(soLuongMoi))
+          break;
+        else
+          print("Ban vua nhap khong phai la so. Vui long nhap lai.");
+      }
+      sp['soLuong'] = soLuongMoi;
+      break;
+    }
+  }
+  if(check == -1)
+  {
+    print("Khong tim thay san pham");
+  }
+  else
+    print("Da sua san pham");
+}
+
 
 void main() 
 {
-  List<Map<String, dynamic>> danhSach = [];
+  
+  List<Map<String, dynamic>> dssp = [];
 
   while (true) 
   {
     print("\n===== MENU =====");
-    print("1. Thêm sinh viên");
-    print("2. Hiển thị danh sách sinh vien");
-    print("3. Tìm SV ĐTB cao nhất");
-    print("4. Thoát");
-    print("Chọn:");
+    print("1. Them san pham");
+    print("2. Xoa san pham");
+    print("3. Sua san pham");
+    print("4. Hien thi danh sach");
+    print("5. Tong tien");
+    print("6. Thoat");
+    print("Chon");
 
-    int chon = int.parse(stdin.readLineSync() ?? "0");
+    int chon = int.parse(stdin.readLineSync() ?? "1");
 
-    switch (chon) {
+    switch (chon) 
+    {
       case 1:
-        print("Ban muon them bao nhieu sinh vien");
+        print("Ban muon them bao nhieu san pham");
         int n = int.parse(stdin.readLineSync() ?? "0");
-        themDanhSachSinhVien(danhSach,n);
+        themDanhSachSanPham(dssp,n);
         break;
       case 2:
-        xuatDanhSachSinhVien(danhSach);
+        print("Nhap ten can xoa:");
+        String tenSanPham = "";
+        while(true)
+        {
+          tenSanPham = stdin.readLineSync()!.replaceAll(RegExp(r'\s+'), ' ').trim().toLowerCase();
+          if(kiemTraTenCoHopLeKhong(tenSanPham))
+            break;
+          else
+            print("Ten khong hop le. Vui long nhap lai");
+        }
+        xoaSanPham(dssp, tenSanPham);
         break;
       case 3:
-        timKiemDTBCaoNhat(danhSach);
+        print("Nhap ten can sua:");
+        String tenSanPham = "";
+        while(true)
+        {
+          tenSanPham = stdin.readLineSync()!.replaceAll(RegExp(r'\s+'), ' ').trim().toLowerCase();
+          if(kiemTraTenCoHopLeKhong(tenSanPham))
+            break;
+          else
+            print("Ten khong hop le. Vui long nhap lai");
+        }
+        suaSanPham(dssp, tenSanPham);
         break;
       case 4:
-        print("Thoát chương trình.");
+        xuatDanhSachSanPham(dssp);
+        break;
+      case 5:
+        print("Tong tien: ${tongTienSanPham(dssp)}");
+        break;
+      case 6:
+        print("Thoat chuong trinh.");
         return;
       default:
-        print("Chọn sai!");
+        print("Lua chon khong hop le");
     }
   }
 }
